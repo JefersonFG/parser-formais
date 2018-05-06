@@ -1,2 +1,15 @@
-# parser-formais
-Repositório para o trabalho de Linguagens Formais e Autômatos - 2018/1
+# Formais 2018/1
+
+## Simplificação de GLCs, Forma Normal de Chomsky e Parsing de Linguagem Natural com CYK
+
+## Uso
+
+Em construção.
+
+## Testes
+
+Em construção.
+
+## Trabalhando no projeto
+
+Em construção.

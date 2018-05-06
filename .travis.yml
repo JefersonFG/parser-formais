@@ -18,4 +18,4 @@ before_install:
 
 # Run test
 script:
-  - nosetests test/test_parser.py
+  - nosetests test/test_grammar.py

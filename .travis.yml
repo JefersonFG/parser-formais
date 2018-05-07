@@ -16,6 +16,7 @@ before_install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION nose
   - source activate test-environment
 
-# Run test
+# Run each test separately
 script:
   - nosetests test/test_grammar.py
+  - nosetests test/test_importer.py

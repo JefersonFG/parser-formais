@@ -4,7 +4,7 @@ import argparse
 from src.importer import Importer
 
 
-parser = argparse.ArgumentParser(description="Parser de linguagem natural - formais 1028/1")
+parser = argparse.ArgumentParser(description="Parser de linguagem natural - formais 2018/1")
 parser.add_argument('arquivo', help='nome do arquivo de onde importar a gramática')
 parser.add_argument('sentenca', help='sentença a ser processada pela gramática')
 

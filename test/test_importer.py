@@ -7,7 +7,7 @@ from src.importer import Importer
 def test_import_from_file_1():
     importer = Importer()
 
-    grammar = importer.import_from_file("test/test_grammar_files/example_grammar_1.txt")
+    grammar = importer.import_from_file("test/test_importer_files/example_grammar_1.txt")
 
     assert_equals(grammar.to_string(), "G = ({S,Z,B,X,Y,A}, {a,b,u,v}, {S -> XYZ | A -> a | B -> b | "
                                        "X -> AXA | X -> BXB | X -> Z | X -> V | Y -> AYB | Y -> BYA | "
@@ -17,7 +17,7 @@ def test_import_from_file_1():
 def test_import_from_file_2():
     importer = Importer()
 
-    grammar = importer.import_from_file("test/test_grammar_files/example_grammar_2.txt")
+    grammar = importer.import_from_file("test/test_importer_files/example_grammar_2.txt")
 
     assert_equals(grammar.to_string(), "G = ({N,VB,NP,DT,VP,S,PP,P}, "
                                        "{runs,barks,eats,chases,park,dog,cat,meat,the,a,in,with,at}, "

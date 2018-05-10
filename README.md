@@ -8,7 +8,7 @@
 ```bash
 usage: parser [-h] arquivo sentenca
 
-Parser de linguagem natural - formais 1028/1
+Parser de linguagem natural - formais 2018/1
 
 positional arguments:
   arquivo     nome do arquivo de onde importar a gramática

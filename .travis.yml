@@ -20,3 +20,5 @@ before_install:
 script:
   - nosetests test/test_grammar.py
   - nosetests test/test_importer.py
+  - nosetests test/test_helper.py
+  - nosetests test/test_normalizer.py

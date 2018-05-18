@@ -10,13 +10,14 @@ class Grammar:
                chave e uma lista de lista de strings como valor
     S - start: símbolo inicial na forma de string
     """
+
     def __init__(self, v, t, p, s):
         self.variables = v
         self.terminals = t
         self.rules = p
         self.start = s
 
-    def to_string(self):
+    def __str__(self):
         """Retorna a gramática em forma de string para exibição na tela"""
         string_return = "G = ({"
 
@@ -40,3 +41,8 @@ class Grammar:
         string_return = string_return[:-3] + "}, " + self.start + ")"
 
         return string_return
+
+    def __eq__(self, other):
+        """Operador de comparação entre gramáticas"""
+        return self.variables == other.variables and self.terminals == other.terminals and \
+            self.rules == other.rules and self.start == other.start

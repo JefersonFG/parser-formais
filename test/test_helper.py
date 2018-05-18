@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from nose.tools import assert_equals
 from src.grammar import Grammar
+from src.helper import grammar_has_productions_longer_than
 
 
-def test_grammar_to_string():
-    """Testa o método to_print da classe Grammar"""
+def test_grammar_has_productions_longer_than():
+    """Testa a função que verifica se a gramática tem produções maiores que x"""
     terminals = ["a", "b", "u", "v"]
     variables = ["S", "Z", "B", "X", "Y", "A"]
     initial = "S"
@@ -18,6 +18,5 @@ def test_grammar_to_string():
 
     grammar = Grammar(variables, terminals, rules, initial)
 
-    assert_equals(grammar.__str__(), "G = ({S,Z,B,X,Y,A}, {a,b,u,v}, {S -> XYZ | A -> a | B -> b | "
-                                     "X -> AXA | X -> BXB | X -> Z | X -> V | Y -> AYB | Y -> BYA | "
-                                     "Y -> Z | Y -> V | Z -> Zu | Z -> Zv | Z -> V}, S)")
+    assert grammar_has_productions_longer_than(grammar, 2)
+    assert not grammar_has_productions_longer_than(grammar, 3)

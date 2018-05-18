@@ -5,6 +5,7 @@ from src.importer import Importer
 
 
 def test_import_from_file_1():
+    """Testa a importação de uma gramática à partir de um arquivo usando o arquivo de teste 1"""
     importer = Importer()
 
     grammar = importer.import_from_file("test/test_importer_files/example_grammar_1.txt")
@@ -15,6 +16,7 @@ def test_import_from_file_1():
 
 
 def test_import_from_file_2():
+    """Testa a importação de uma gramática à partir de um arquivo usando o arquivo de teste 1"""
     importer = Importer()
 
     grammar = importer.import_from_file("test/test_importer_files/example_grammar_2.txt")

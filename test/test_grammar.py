@@ -5,7 +5,7 @@ from src.grammar import Grammar
 
 
 def test_grammar_to_string():
-    """Testa o método to_print da classe Grammar"""
+    """Testa a representação em string do objeto que representa a gramática"""
     terminals = ["a", "b", "u", "v"]
     variables = ["S", "Z", "B", "X", "Y", "A"]
     initial = "S"

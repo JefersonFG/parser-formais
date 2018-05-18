@@ -9,11 +9,19 @@ class Normalizer:
     @staticmethod
     def to_chomsky_form(grammar):
         """Transforma na forma normal de Chomsky"""
+        print("\nTransformação da gramática para a Forma Normal de Chomsky")
 
         # TODO Simplificar a gramática aqui
+        print("\nEtapa 1:")
+        print(grammar)
 
         grammar = Normalizer.chomsky_step_2(grammar)
+        print("\nEtapa 2:")
+        print(grammar)
+
         grammar = Normalizer.chomsky_step_3(grammar)
+        print("\nEtapa 3:")
+        print(grammar)
 
         return grammar
 

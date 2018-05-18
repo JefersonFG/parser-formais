@@ -18,5 +18,9 @@ try:
     print("Gramática importada:")
     print(grammar.to_string())
 
+    # TODO Simplificar a gramática aqui (exibição na tela fica mais limpa)
+
+    # TODO Transformar a gramática para a FNC
+
 except FileNotFoundError:
     print("O arquivo " + args.arquivo + " não existe!")

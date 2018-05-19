@@ -6,24 +6,6 @@ from src.grammar import Grammar
 from src.simplifier import Simplifier
 
 
-def test_first_algorithms():
-    """Testa os primeiros algoritmos de simplificação de gramáticas"""
-    terminals = ["a", "b", "u", "v"]
-    variables = ["S", "Z", "B", "X", "Y", "A"]
-    initial = "S"
-    rules = {"S": [["X", "Y", "Z"]],
-             "A": [["a"]],
-             "B": [["b"]],
-             "X": [["A", "X", "A"], ["B", "X", "B"], ["Z"], ["V"]],
-             "Y": [["A", "Y", "B"], ["B", "Y", "A"], ["Z"], ["V"]],
-             "Z": [["Z", "u"], ["Z", "v"], ["V"]]}
-
-    original_grammar = Grammar(variables, terminals, rules, initial)
-
-    # TODO Entra em loop infinito
-    # simplified_grammar = Simplifier.first_algorithms(original_grammar)
-
-
 def test_simple_production_simplification():
     """Testa a simplificação de produções que substituem variáveis"""
     terminals = ["a", "b"]

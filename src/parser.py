@@ -2,6 +2,7 @@
 
 import argparse
 from src.importer import Importer
+from src.normalizer import Normalizer
 
 
 parser = argparse.ArgumentParser(description="Parser de linguagem natural - formais 2018/1")
@@ -13,14 +14,11 @@ args = parser.parse_args()
 importer = Importer()
 
 try:
+    # Importa a gramática do arquivo
     grammar = importer.import_from_file(args.arquivo)
 
-    print("Gramática importada:")
-    print(grammar.to_string())
-
-    # TODO Simplificar a gramática aqui (exibição na tela fica mais limpa)
-
-    # TODO Transformar a gramática para a FNC
+    # Converte a gramática para a Forma Normal de Chomsky
+    grammar = Normalizer.to_chomsky_form(grammar)
 
 except FileNotFoundError:
     print("O arquivo " + args.arquivo + " não existe!")

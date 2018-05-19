@@ -5,17 +5,91 @@ class Simplifier:
     """Classe que contém métodos para simplificação de gramáticas"""
 
     @staticmethod
-    def first_algorithms(grammar):
-        # Elimina símbolos inúteis nas produções (2 ETAPAS)
-        # ETAPA 1 - remove produções que não geram símbolos terminais
+    def simplify(grammar):
+        """Simplifica a gramática aplicando os três algoritmos na ordem recomendada"""
+        print("\nSimplificando a gramática")
 
-        V1 = [] # Variaveis que geram terminais
+        # Remove produções vazias
+        # TODO Não funcional
+        # grammar = Simplifier.empty_productions(grammar)
+
+        # Remove produções que substituem variáveis
+        grammar = Simplifier.simple_production(grammar)
+
+        # Remove símbolos inúteis
+        # TODO Não funcional
+        # grammar = Simplifier.useless_symbols(grammar)
+
+        return grammar
+
+    @staticmethod
+    def empty_productions(grammar):
+        """Simplifica produções vazias"""
+
+        # ETAPA 1
+        # forma do livro
+
+        Ve = []  # conjunto de variáveis que geram o vazio de forma direta ou indireta
+
+        for origin, productions in grammar.rules.items():
+            for production in productions:
+                if 'V' in production:
+                    Ve.append(origin)  # adiciona todas as variáveis que produzem vazio à Ve
+
+        for origin, productions in grammar.rules.items():
+            for production in productions:
+                for emptyVar in Ve:
+                    if emptyVar in production:
+                        if origin not in Ve:
+                            Ve.append(origin)  # gera indiretamente o vazio
+                        break
+
+        # ETAPA 2
+
+        P1 = {}  # todas as produções que nao geram vazio
+
+        for origin, productions in grammar.rules.items():
+            for production in productions:
+                if 'V' not in production:
+                    # adiciona todas as produções que não tem vazio do lado direito à P1
+                    P1.update({origin: production})
+
+        for origin, productions in P1.items():
+            for production in productions:
+                for emptyVar in Ve:
+                    if emptyVar in P1:
+                        # adiciona produção que antes tinha Y =>+ V, aYa|aa
+                        # TODO Erro no remove
+                        P1.update({origin: production.remove(emptyVar)})
+
+        # ETAPA 3
+
+        if len(Ve) > 0:
+            P2 = P1
+            P2.update({'S': 'V'})  # adiciona a produção vazia, caso ela faça parte da linguagem
+
+        return grammar
+
+    @staticmethod
+    def useless_symbols(grammar):
+        """Simplifica símbolos inúteis"""
+
+        # ETAPA 1 - remove produções que não geram símbolos terminais
+        V1 = []  # Variaveis que geram terminais
 
         for origin, productions in grammar.rules.items():
             for production in productions:
                 for terminal in grammar.terminals:  # passa por todos os terminais
-                    if terminal in production and origin not in V1:
-                        V1.append(origin)
+                    # TODO Errado, tu tem que adicionar quem gera terminais do tipo
+                    # A -> a
+                    # Assim tu tá incluindo produções do tipo
+                    # A -> Aa
+                    # Isso não é gerar um terminal! Gerar um terminal é terminar
+                    # de aplicar as regras de produção, corrige aqui
+                    if terminal in production:
+                        if origin not in V1:
+                            V1.append(origin)
+                        break
 
         print("V1: {}".format(V1))  # variaveis que geram terminais diretamente
 
@@ -49,46 +123,6 @@ class Simplifier:
 
         grammar.terminals = T2
         grammar.variables = V2
-
-        # Eliminação de Produções vazias (3 ETAPAS)
-
-        # ETAPA 1
-        # forma do livro
-
-        Ve = []  # conjunto de variáveis que geram o vazio de forma direta ou indireta
-
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                if 'V' in production:
-                    Ve.append(origin)  # adiciona todas as variáveis que produzem vazio à Ve
-
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                for emptyVar in Ve:
-                    if emptyVar in production:
-                        Ve.append(origin)  # gera indiretamente o vazio
-
-        # ETAPA 2
-
-        P1 = {}  # todas as produções que nao geram vazio
-
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                if 'V' not in production:
-                    P1.update({origin:production})  # adiciona todas as produções que não tem vazio do lado direito à P1
-
-        for origin, productions in P1.items():
-            for production in productions:
-                for emptyVar in Ve:
-                    if emptyVar in P1:
-                        # adiciona produção que antes tinha Y =>+ V, aYa|aa
-                        P1.update({origin: production.remove(emptyVar)})
-
-        # ETAPA 3
-
-        if len(Ve) > 0:
-            P2 = P1
-            P2.update({'S': 'V'})  # adiciona a produção vazia, caso ela faça parte da linguagem
 
         return grammar
 

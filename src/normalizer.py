@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 from src.helper import grammar_has_productions_longer_than
+from src.simplifier import Simplifier
 
 
 class Normalizer:
@@ -11,7 +12,7 @@ class Normalizer:
         """Transforma na forma normal de Chomsky"""
         print("\nTransformação da gramática para a Forma Normal de Chomsky")
 
-        # TODO Simplificar a gramática aqui
+        grammar = Simplifier.simplify(grammar)
         print("\nEtapa 1 - gramática simplificada:")
         print(grammar)
 

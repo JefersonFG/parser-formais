@@ -3,10 +3,28 @@
 from nose.tools import assert_equals
 from collections import Counter
 from src.grammar import Grammar
-from src.simple_production_simplifier import Simplifier
+from src.simplifier import Simplifier
 
 
-def test_simple_production_simplifier():
+def test_first_algorithms():
+    """Testa os primeiros algoritmos de simplificação de gramáticas"""
+    terminals = ["a", "b", "u", "v"]
+    variables = ["S", "Z", "B", "X", "Y", "A"]
+    initial = "S"
+    rules = {"S": [["X", "Y", "Z"]],
+             "A": [["a"]],
+             "B": [["b"]],
+             "X": [["A", "X", "A"], ["B", "X", "B"], ["Z"], ["V"]],
+             "Y": [["A", "Y", "B"], ["B", "Y", "A"], ["Z"], ["V"]],
+             "Z": [["Z", "u"], ["Z", "v"], ["V"]]}
+
+    original_grammar = Grammar(variables, terminals, rules, initial)
+
+    # TODO Entra em loop infinito
+    # simplified_grammar = Simplifier.first_algorithms(original_grammar)
+
+
+def test_simple_production_simplification():
     """Testa a simplificação de produções que substituem variáveis"""
     terminals = ["a", "b"]
     variables = ["S", "X"]
@@ -29,7 +47,7 @@ def test_simple_production_simplifier():
     assert_equals(expected_grammar, simplified_grammar)
 
 
-def test_simple_production_simplifier_step_1():
+def test_simple_production_simplification_step_1():
     """Testa a primeira etapa da simplificação de produções que substituem variáveis"""
     terminals = ["a", "b", "c", "d", "e"]
     variables = ["A", "B", "C", "D", "E"]
@@ -57,7 +75,7 @@ def test_simple_production_simplifier_step_1():
     assert_equals(transitive_closure_list, expected_transitive_closure_list)
 
 
-def test_simple_production_simplifier_step_2():
+def test_simple_production_simplification_step_2():
     """Testa a segunda etapa da simplificação de produções que substituem variáveis"""
     terminals = ["a", "b", "c", "d", "e"]
     variables = ["A", "B", "C", "D", "E"]

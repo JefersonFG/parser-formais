@@ -6,6 +6,54 @@ from src.grammar import Grammar
 from src.simplifier import Simplifier
 
 
+def test_empty_productions():
+    """Testa a simplificação de produções vazias"""
+    terminals = ["a", "b"]
+    variables = ["S", "X", "Y"]
+    initial = "S"
+    rules = {"S": [["a", "X", "a"], ["b", "X", "b"], ["V"]],
+             "X": [["a"], ["b"], ["Y"]],
+             "Y": [["V"]]}
+
+    original_grammar = Grammar(variables, terminals, rules, initial)
+
+    terminals = ["a", "b"]
+    variables = ["S", "X", "Y"]
+    initial = "S"
+    rules = {"S": [["a", "X", "a"], ["b", "X", "b"], ["a", "a"], ["b", "b"], ["V"]],
+             "X": [["a"], ["b"], ["Y"]]}
+
+    expected_grammar = Grammar(variables, terminals, rules, initial)
+
+    simplified_grammar = Simplifier.empty_productions(original_grammar)
+
+    assert_equals(expected_grammar, simplified_grammar)
+
+
+def test_useless_symbols():
+    """Testa a simplificação de símbolos inúteis"""
+    terminals = ["a", "b", "c"]
+    variables = ["S", "A", "B", "C"]
+    initial = "S"
+    rules = {"S": [["a", "A", "a"], ["b", "B", "b"]],
+             "A": [["a"], ["S"]],
+             "C": [["c"]]}
+
+    original_grammar = Grammar(variables, terminals, rules, initial)
+
+    terminals = ["a"]
+    variables = ["S", "A"]
+    initial = "S"
+    rules = {"S": [["a", "A", "a"]],
+             "A": [["a"], ["S"]]}
+
+    expected_grammar = Grammar(variables, terminals, rules, initial)
+
+    simplified_grammar = Simplifier.useless_symbols(original_grammar)
+
+    assert_equals(expected_grammar, simplified_grammar)
+
+
 def test_simple_production_simplification():
     """Testa a simplificação de produções que substituem variáveis"""
     terminals = ["a", "b"]

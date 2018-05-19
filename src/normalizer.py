@@ -12,15 +12,15 @@ class Normalizer:
         print("\nTransformação da gramática para a Forma Normal de Chomsky")
 
         # TODO Simplificar a gramática aqui
-        print("\nEtapa 1:")
+        print("\nEtapa 1 - gramática simplificada:")
         print(grammar)
 
         grammar = Normalizer.chomsky_step_2(grammar)
-        print("\nEtapa 2:")
+        print("\nEtapa 2 - produções de tamanho maior ou igual a dois só geram variáveis:")
         print(grammar)
 
         grammar = Normalizer.chomsky_step_3(grammar)
-        print("\nEtapa 3:")
+        print("\nEtapa 3 - produções de tamanho maior ou igual a três geram exatamente duas variáveis:")
         print(grammar)
 
         return grammar

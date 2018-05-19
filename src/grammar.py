@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
+
 
 class Grammar:
     """Classe que representa uma gramática na forma G = (V,T,P,S), onde:
@@ -44,5 +46,19 @@ class Grammar:
 
     def __eq__(self, other):
         """Operador de comparação entre gramáticas"""
+        # Cria uma cópia para poder modificar as listas de produções
+        temp_grammar = deepcopy(self)
+
+        # Ordena as listas de produções para a comparação
+        for key in temp_grammar.rules:
+            for i in range(len(temp_grammar.rules[key])):
+                temp_grammar.rules[key][i] = sorted(temp_grammar.rules[key][i])
+                temp_grammar.rules[key] = sorted(temp_grammar.rules[key])
+
+        for key in other.rules:
+            for i in range(len(other.rules[key])):
+                other.rules[key][i] = sorted(other.rules[key][i])
+            other.rules[key] = sorted(other.rules[key])
+
         return self.variables == other.variables and self.terminals == other.terminals and \
-            self.rules == other.rules and self.start == other.start
+            temp_grammar.rules == other.rules and self.start == other.start

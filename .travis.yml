@@ -22,3 +22,4 @@ script:
   - nosetests test/test_importer.py
   - nosetests test/test_helper.py
   - nosetests test/test_normalizer.py
+  - nosetests test/test_simple_production_simplifier.py

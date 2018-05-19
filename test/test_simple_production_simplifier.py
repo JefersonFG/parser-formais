@@ -84,5 +84,4 @@ def test_simple_production_simplifier_step_2():
     transitive_closure_list = Simplifier.simple_production_step_1(original_grammar)
     simplified_grammar = Simplifier.simple_production_step_2(original_grammar, transitive_closure_list)
 
-    # TODO(jfguimaraes) Adicionar operador de comparação ao objeto que representa a gramática (branch normal_form)
     assert_equals(expected_grammar, simplified_grammar)

@@ -102,26 +102,25 @@ class Simplifications:
 
         # ETAPA 2
 
-            P1 = {} #todas as produções que nao geram vazio
+        P1 = {} #todas as produções que nao geram vazio
 
-            for origin, productions in grammar.rules.items():
-                for production in productions:
-                    if 'V' not in production:
-                        P1.update({origin:production})
+        for origin, productions in grammar.rules.items():
+            for production in productions:
+                if 'V' not in production:
+                    P1.update({origin:production})  # adiciona todas as produções que não tem vazio do lado direito à P1
 
-                        #P1.append{origin:production}  # adiciona todas as produções que não tem vazio do lado direito à P1
+        for origin, productions in P1.items():
+            for production in productions:
+                for emptyVar in Ve:
+                    if emptyVar in P1:
+                        P1.update({origin: production.remove(emptyVar)}) #adiciona produção que antes tinha Y =>+ V, aYa|aa
 
-            for origin, productions in grammar.rules.items():
-                for production in P1:
-                    for emptyVar in Ve:
-                        if emptyVar in P1:
-                            P1.append()  #nao entendi como adicionar a produção da forma correta
 
 
         # ETAPA 3
+        if len(Ve) > 0:
+            P2 = P1
+            P2.update({'S': 'V'})  # adiciona a produção vazia, caso ela faça parte da linguagem
 
-        #????
 
-
-
-        return
+        return grammar

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import copy
 
 class Simplifier:
     """Classe que contém métodos para simplificação de gramáticas"""
@@ -26,47 +27,70 @@ class Simplifier:
     def empty_productions(grammar):
         """Simplifica produções vazias"""
 
+        # Eliminação de Produções vazias (3 ETAPAS)
+        print("Eliminação de produções vazias")
+        print("Etapa 1: variáveis que constituem produções vazias")
         # ETAPA 1
         # forma do livro
-
         Ve = []  # conjunto de variáveis que geram o vazio de forma direta ou indireta
-
         for origin, productions in grammar.rules.items():
             for production in productions:
                 if 'V' in production:
                     Ve.append(origin)  # adiciona todas as variáveis que produzem vazio à Ve
+        
+        contador = 0
+        while (contador == 0):
+            contador = 1
+            for origin, productions in grammar.rules.items():
+                for production in productions:
+                    for emptyVariable in Ve:
+                        if emptyVariable in production and origin not in Ve:
+                            Ve.append(origin)
+                            contador = 0
+        print("Ve: ")
+        print(Ve)
 
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                for emptyVar in Ve:
-                    if emptyVar in production:
-                        if origin not in Ve:
-                            Ve.append(origin)  # gera indiretamente o vazio
-                        break
 
         # ETAPA 2
-
-        P1 = {}  # todas as produções que nao geram vazio
-
+        
+        print("Etapa 2: exclusão de produções vazias")
+        P1 = {}
         for origin, productions in grammar.rules.items():
             for production in productions:
                 if 'V' not in production:
-                    # adiciona todas as produções que não tem vazio do lado direito à P1
-                    P1.update({origin: production})
+                    if origin in P1:
+                        P1[origin].append(production)
+                    else:
+                        P1[origin] = [production]
 
-        for origin, productions in P1.items():
-            for production in productions:
-                for emptyVar in Ve:
-                    if emptyVar in P1:
-                        # adiciona produção que antes tinha Y =>+ V, aYa|aa
-                        # TODO Erro no remove
-                        P1.update({origin: production.remove(emptyVar)})
+        contador = 0
+        while (contador == 0):
+            contador = 1
+            for origin, productions in P1.items():
+                for production in productions:
+                    for variable in Ve:
+                        if variable in production:
+                            newProduction = copy.deepcopy(production)
+                            newProduction.remove(variable)
+                            if newProduction not in P1[origin] and newProduction: #se nao foi add, se nao gerou um vazio, add!
+                                contador = 0
+                                P1[origin].append(newProduction)
 
-        # ETAPA 3
+        # Etapa 3
+        # Se possui V, inserir INICIO -> V
+        print("Etapa 3: geração da palavra vazia, se necessário")
 
-        if len(Ve) > 0:
-            P2 = P1
-            P2.update({'S': 'V'})  # adiciona a produção vazia, caso ela faça parte da linguagem
+        if Ve:
+            P1[grammar.start].append(['V'])
+
+
+        print(P1)
+
+        grammar.variables = Ve
+        grammar.rules = P1
+        print("Gramática resultante:")
+        print(grammar)
+
 
         return grammar
 
@@ -75,33 +99,45 @@ class Simplifier:
         """Simplifica símbolos inúteis"""
 
         # ETAPA 1 - remove produções que não geram símbolos terminais
+
+        print("GRAMATICA RECEBIDA\n")
+        print(grammar)
+        print("\n\n\n")
+
         V1 = []  # Variaveis que geram terminais
 
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                for terminal in grammar.terminals:  # passa por todos os terminais
-                    # TODO Errado, tu tem que adicionar quem gera terminais do tipo
-                    # A -> a
-                    # Assim tu tá incluindo produções do tipo
-                    # A -> Aa
-                    # Isso não é gerar um terminal! Gerar um terminal é terminar
-                    # de aplicar as regras de produção, corrige aqui
-                    if terminal in production:
-                        if origin not in V1:
+        contador = 0
+        while contador == 0:
+            contador = 1
+            for origin, productions in grammar.rules.items():
+                for production in productions:
+                    for terminal in grammar.terminals:  # passa por todos os terminais
+                        if terminal in production and len(production) == 1:
+                            if origin not in V1:
+                                V1.append(origin)  # adiciona produções do tipo A -> a à V1
+                                contador = 0
+                        
+        print("\n\n")
+        print("V1 DIRETO: {}".format(V1))  # variaveis que geram terminais diretamente
+        print("\n\n")
+
+        # V1 DIRETO CORRETO
+
+        contador = 0
+        while contador == 0:
+            contador = 1
+            for origin, productions in grammar.rules.items():
+                for production in productions:
+                    for variable in V1:
+                        # se alguma variavel de V1 estiver nas produções
+                        # a origem dessas produções será adicionada à V1 (Se já não estiver)
+                        if variable in production and origin not in V1:
                             V1.append(origin)
-                        break
+                            contador = 0
 
-        print("V1: {}".format(V1))  # variaveis que geram terminais diretamente
-
-        for origin, productions in grammar.rules.items():
-            for production in productions:
-                for variable in V1:
-                    # se alguma variavel de V1 estiver nas produções
-                    # a origem dessas produções será adicionada à V1 (Se já não estiver)
-                    if variable in production and origin not in V1:
-                        V1.append(origin)
-
-        print("V1: {}".format(V1))
+        print("\n\n")
+        print("V1 DIRETO E INDIRETO: {}".format(V1))
+        # V1 DIRETO E INDIRETO CORRETO
 
         grammar.variables = V1
 
@@ -112,17 +148,32 @@ class Simplifier:
         V2 = ['S']
 
         for start in V2:  # variavel de onde vai partir
-            for start, productions in grammar.rules.items():  # ve as produções da variavel
-                for production in productions:
-                    for variable in grammar.variables:
-                        if variable in productions:  # se tiver alguma variavel nas produções, então ela é atingível
-                            V2.append(variable)
-                        # tambem deve-se adicionar os terminais dessa produção
-                        for terminal in grammar.terminals:
-                            T2.append(terminal)
+            print("START = {}".format(start))
+            contador = 0
+            while contador == 0:
+                contador = 1
+                for origin, productions in grammar.rules.items():  # ve as produções da variavel
+                    for production in productions:
+                        for variable in grammar.variables:
+                            if variable in production and variable not in V2:  # se tiver alguma variavel nas produções, então ela é atingível
+                                V2.append(variable)
+                                for terminal in production:
+                                    if terminal in grammar.terminals and terminal not in T2:
+                                        T2.append(terminal)
+                                        contador = 0
+
+        print("\n\n")
+        print("V2: {}".format(V2)) #CORRETO
+
+        print("\n\n")
+        print("T2: {}".format(T2)) #CORRETO
+
 
         grammar.terminals = T2
         grammar.variables = V2
+
+        print("GRAMATICA:")
+        print (grammar)
 
         return grammar
 

@@ -46,8 +46,15 @@ class Grammar:
 
     def __eq__(self, other):
         """Operador de comparação entre gramáticas"""
-        # Cria uma cópia para poder modificar as listas de produções
+        # Cria uma cópia para poder modificar as listas e facilitar as comparações
         temp_grammar = deepcopy(self)
+
+        # Ordena as listas de variáveis e terminais para a comparação
+        temp_grammar.terminals = sorted(temp_grammar.terminals)
+        temp_grammar.variables = sorted(temp_grammar.variables)
+
+        other.terminals = sorted(other.terminals)
+        other.variables = sorted(other.variables)
 
         # Ordena as listas de produções para a comparação
         for key in temp_grammar.rules:
@@ -60,5 +67,5 @@ class Grammar:
                 other.rules[key][i] = sorted(other.rules[key][i])
             other.rules[key] = sorted(other.rules[key])
 
-        return self.variables == other.variables and self.terminals == other.terminals and \
+        return temp_grammar.variables == other.variables and temp_grammar.terminals == other.terminals and \
             temp_grammar.rules == other.rules and self.start == other.start

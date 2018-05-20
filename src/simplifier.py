@@ -2,6 +2,7 @@
 
 import copy
 
+
 class Simplifier:
     """Classe que contém métodos para simplificação de gramáticas"""
 
@@ -11,15 +12,13 @@ class Simplifier:
         print("\nSimplificando a gramática")
 
         # Remove produções vazias
-        # TODO Não funcional
-        # grammar = Simplifier.empty_productions(grammar)
+        grammar = Simplifier.empty_productions(grammar)
 
         # Remove produções que substituem variáveis
         grammar = Simplifier.simple_production(grammar)
 
         # Remove símbolos inúteis
-        # TODO Não funcional
-        # grammar = Simplifier.useless_symbols(grammar)
+        grammar = Simplifier.useless_symbols(grammar)
 
         return grammar
 
@@ -28,18 +27,18 @@ class Simplifier:
         """Simplifica produções vazias"""
 
         # Eliminação de Produções vazias (3 ETAPAS)
-        print("Eliminação de produções vazias")
-        print("Etapa 1: variáveis que constituem produções vazias")
+        print("\nEliminação de produções vazias")
+
         # ETAPA 1
-        # forma do livro
         Ve = []  # conjunto de variáveis que geram o vazio de forma direta ou indireta
+
         for origin, productions in grammar.rules.items():
             for production in productions:
                 if 'V' in production:
                     Ve.append(origin)  # adiciona todas as variáveis que produzem vazio à Ve
         
         contador = 0
-        while (contador == 0):
+        while contador == 0:
             contador = 1
             for origin, productions in grammar.rules.items():
                 for production in productions:
@@ -47,14 +46,13 @@ class Simplifier:
                         if emptyVariable in production and origin not in Ve:
                             Ve.append(origin)
                             contador = 0
-        print("Ve: ")
-        print(Ve)
 
+        print("\nEtapa 1 - variáveis que constituem produções vazias:")
+        print("Ve: " + str(Ve))
 
         # ETAPA 2
-        
-        print("Etapa 2: exclusão de produções vazias")
         P1 = {}
+
         for origin, productions in grammar.rules.items():
             for production in productions:
                 if 'V' not in production:
@@ -64,33 +62,34 @@ class Simplifier:
                         P1[origin] = [production]
 
         contador = 0
-        while (contador == 0):
+
+        while contador == 0:
             contador = 1
             for origin, productions in P1.items():
                 for production in productions:
                     for variable in Ve:
                         if variable in production:
-                            newProduction = copy.deepcopy(production)
-                            newProduction.remove(variable)
-                            if newProduction not in P1[origin] and newProduction: #se nao foi add, se nao gerou um vazio, add!
+                            new_production = copy.deepcopy(production)
+                            new_production.remove(variable)
+                            # se nao foi add, se nao gerou um vazio, add!
+                            if new_production not in P1[origin] and new_production:
                                 contador = 0
-                                P1[origin].append(newProduction)
+                                P1[origin].append(new_production)
+
+        print("\nEtapa 2 - exclusão de produções vazias:")
+        print("P1: " + str(P1))
 
         # Etapa 3
         # Se possui V, inserir INICIO -> V
-        print("Etapa 3: geração da palavra vazia, se necessário")
 
         if Ve:
             P1[grammar.start].append(['V'])
 
-
-        print(P1)
-
         grammar.variables = Ve
         grammar.rules = P1
-        print("Gramática resultante:")
-        print(grammar)
 
+        print("\nEtapa 3: geração da palavra vazia, se necessário")
+        print(grammar)
 
         return grammar
 
@@ -98,15 +97,14 @@ class Simplifier:
     def useless_symbols(grammar):
         """Simplifica símbolos inúteis"""
 
-        # ETAPA 1 - remove produções que não geram símbolos terminais
+        print("\nEliminação de símbolos inúteis")
 
-        print("GRAMATICA RECEBIDA\n")
-        print(grammar)
-        print("\n\n\n")
+        # ETAPA 1 - remove produções que não geram símbolos terminais
 
         V1 = []  # Variaveis que geram terminais
 
         contador = 0
+
         while contador == 0:
             contador = 1
             for origin, productions in grammar.rules.items():
@@ -116,10 +114,6 @@ class Simplifier:
                             if origin not in V1:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0
-                        
-        print("\n\n")
-        print("V1 DIRETO: {}".format(V1))  # variaveis que geram terminais diretamente
-        print("\n\n")
 
         # V1 DIRETO CORRETO
 
@@ -135,85 +129,64 @@ class Simplifier:
                             V1.append(origin)
                             contador = 0
 
-        print("\n\n")
-        print("V1 DIRETO E INDIRETO: {}".format(V1))
         # V1 DIRETO E INDIRETO CORRETO
 
         grammar.variables = V1
 
-        #P1 = grammar.rules
-
         for origin, productions in grammar.rules.items():
-            removeRegra = 0
-            print("ORIGEM: {}".format(origin))
+            remove_regra = 0
             for production in productions:
                 for prodItem in production:
-                    #print("prodItem = {}".format(prodItem))
+                    # print("prodItem = {}".format(prodItem))
                     if prodItem not in V1 and prodItem not in grammar.terminals:
-                        removeRegra = 1
-                    if removeRegra:
-                        removeRegra = 0
-                        print("removerá: {} {}".format(origin, production))
+                        remove_regra = 1
+                    if remove_regra:
+                        remove_regra = 0
                         grammar.rules[origin].remove(production)
                     if origin not in V1 and prodItem not in grammar.terminals:
-                        removeRegra = 0
-                        print("removerá: {} {}".format(origin, production))
+                        remove_regra = 0
                         grammar.rules[origin].remove(production)
 
-        print(grammar.rules)
-                        
-
-        #grammar.rules = P1
+        print("\nEtapa 1 - qualquer variável gera terminais:")
+        print(grammar)
 
         # ETAPA 2 - Verificação do que é atingível a partir da Variável inicial (S),
         # as variáveis atingíveis são adicionadas à V2
         # e terminais atingíveis são adicionados à T2
+
         T2 = []
         V2 = ['S']
 
         for start in V2:  # variavel de onde vai partir
-            print("START = {}".format(start))
             contador = 0
             while contador == 0:
                 contador = 1
                 for origin, productions in grammar.rules.items():  # ve as produções da variavel
                     for production in productions:
                         for variable in grammar.variables:
-                            if variable in production and variable not in V2:  # se tiver alguma variavel nas produções, então ela é atingível
+                            # se tiver alguma variavel nas produções, então ela é atingível
+                            if variable in production and variable not in V2:
                                 V2.append(variable)
                                 for terminal in production:
                                     if terminal in grammar.terminals and terminal not in T2:
                                         T2.append(terminal)
                                         contador = 0
 
-        listaRemove = []
+        lista_remove = []
 
         for origin, productions in grammar.rules.items():  # ve as produções da variavel
             for production in productions:
                 if origin not in V2:
-                    listaRemove.append(origin)
+                    lista_remove.append(origin)
         
-        for chave in listaRemove:
+        for chave in lista_remove:
             grammar.rules.pop(chave, None)
-
-        print("\n\n")
-        print("V2: {}".format(V2)) #CORRETO
-
-        print("\n\n")
-        print("T2: {}".format(T2)) #CORRETO
-
-        print("\n\n")
-        print("REGRAS\n{}".format(grammar.rules))
-
-
-        
-
 
         grammar.terminals = T2
         grammar.variables = V2
 
-        print("GRAMATICA:")
-        print (grammar)
+        print("\nEtapa 2 - qualquer símbolo é atingível à partir do símbolo inicial:")
+        print(grammar)
 
         return grammar
 

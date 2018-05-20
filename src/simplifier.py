@@ -141,6 +141,30 @@ class Simplifier:
 
         grammar.variables = V1
 
+        #P1 = grammar.rules
+
+        for origin, productions in grammar.rules.items():
+            removeRegra = 0
+            print("ORIGEM: {}".format(origin))
+            for production in productions:
+                for prodItem in production:
+                    #print("prodItem = {}".format(prodItem))
+                    if prodItem not in V1 and prodItem not in grammar.terminals:
+                        removeRegra = 1
+                    if removeRegra:
+                        removeRegra = 0
+                        print("removerá: {} {}".format(origin, production))
+                        grammar.rules[origin].remove(production)
+                    if origin not in V1 and prodItem not in grammar.terminals:
+                        removeRegra = 0
+                        print("removerá: {} {}".format(origin, production))
+                        grammar.rules[origin].remove(production)
+
+        print(grammar.rules)
+                        
+
+        #grammar.rules = P1
+
         # ETAPA 2 - Verificação do que é atingível a partir da Variável inicial (S),
         # as variáveis atingíveis são adicionadas à V2
         # e terminais atingíveis são adicionados à T2
@@ -162,11 +186,27 @@ class Simplifier:
                                         T2.append(terminal)
                                         contador = 0
 
+        listaRemove = []
+
+        for origin, productions in grammar.rules.items():  # ve as produções da variavel
+            for production in productions:
+                if origin not in V2:
+                    listaRemove.append(origin)
+        
+        for chave in listaRemove:
+            grammar.rules.pop(chave, None)
+
         print("\n\n")
         print("V2: {}".format(V2)) #CORRETO
 
         print("\n\n")
         print("T2: {}".format(T2)) #CORRETO
+
+        print("\n\n")
+        print("REGRAS\n{}".format(grammar.rules))
+
+
+        
 
 
         grammar.terminals = T2

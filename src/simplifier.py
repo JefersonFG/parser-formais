@@ -35,7 +35,7 @@ class Simplifier:
         for origin, productions in grammar.rules.items():
             for production in productions:
                 if 'V' in production:
-                    Ve.append(origin)  # adiciona todas as variáveis que produzem vazio à Ve
+                    Ve.append(origin)  # adiciona todas as variáveis que produzem diretamente vazio à Ve
         
         contador = 0
         while contador == 0:
@@ -44,7 +44,7 @@ class Simplifier:
                 for production in productions:
                     for emptyVariable in Ve:
                         if emptyVariable in production and origin not in Ve:
-                            Ve.append(origin)
+                            Ve.append(origin)  # adiciona todas as variáveis que produzem indiretamente vazio à Ve
                             contador = 0
 
         print("\nEtapa 1 - variáveis que constituem produções vazias:")
@@ -57,9 +57,9 @@ class Simplifier:
             for production in productions:
                 if 'V' not in production:
                     if origin in P1:
-                        P1[origin].append(production)
+                        P1[origin].append(production) # adiciona produção à origem já existente em P1
                     else:
-                        P1[origin] = [production]
+                        P1[origin] = [production] # adiciona a produção com a origem, caso não esteja em P1
 
         contador = 0
 
@@ -115,6 +115,8 @@ class Simplifier:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0
 
+        print("V1 DIRETO = {}".format(V1))
+
         # V1 DIRETO CORRETO
 
         contador = 0
@@ -129,23 +131,22 @@ class Simplifier:
                             V1.append(origin)
                             contador = 0
 
+        print("V1 DIRETO E INDIRETO = {}".format(V1))
+
         # V1 DIRETO E INDIRETO CORRETO
 
         grammar.variables = V1
+
+        # P1 é feito diretamente sobre a gramática no código abaixo
+        # uma vez que P1 <= P (deve-se remover produções de P se necessário para chegar a P1)
 
         for origin, productions in grammar.rules.items():
             remove_regra = 0
             for production in productions:
                 for prodItem in production:
-                    # print("prodItem = {}".format(prodItem))
-                    if prodItem not in V1 and prodItem not in grammar.terminals:
-                        remove_regra = 1
-                    if remove_regra:
-                        remove_regra = 0
+                    if prodItem not in V1 and prodItem not in grammar.terminals: # considerar apenas Variáveis
                         grammar.rules[origin].remove(production)
-                    if origin not in V1 and prodItem not in grammar.terminals:
                         remove_regra = 0
-                        grammar.rules[origin].remove(production)
 
         print("\nEtapa 1 - qualquer variável gera terminais:")
         print(grammar)
@@ -155,32 +156,33 @@ class Simplifier:
         # e terminais atingíveis são adicionados à T2
 
         T2 = []
-        V2 = ['S']
+        V2 = [grammar.start]
 
         for start in V2:  # variavel de onde vai partir
             contador = 0
             while contador == 0:
                 contador = 1
-                for origin, productions in grammar.rules.items():  # ve as produções da variavel
+                for origin, productions in grammar.rules.items():
                     for production in productions:
                         for variable in grammar.variables:
                             # se tiver alguma variavel nas produções, então ela é atingível
                             if variable in production and variable not in V2:
                                 V2.append(variable)
-                                for terminal in production:
-                                    if terminal in grammar.terminals and terminal not in T2:
+                                contador = 0
+                                for terminal in grammar.terminals:
+                                    if terminal in production and terminal not in T2:
                                         T2.append(terminal)
                                         contador = 0
 
         lista_remove = []
 
-        for origin, productions in grammar.rules.items():  # ve as produções da variavel
+        for origin, productions in grammar.rules.items():
             for production in productions:
                 if origin not in V2:
                     lista_remove.append(origin)
         
-        for chave in lista_remove:
-            grammar.rules.pop(chave, None)
+        for origin in lista_remove:
+            grammar.rules.pop(origin, None)
 
         grammar.terminals = T2
         grammar.variables = V2

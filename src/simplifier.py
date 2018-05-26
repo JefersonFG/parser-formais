@@ -115,8 +115,6 @@ class Simplifier:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0
 
-        print("V1 DIRETO = {}".format(V1))
-
         # V1 DIRETO CORRETO
 
         contador = 0
@@ -130,8 +128,6 @@ class Simplifier:
                         if variable in production and origin not in V1:
                             V1.append(origin)
                             contador = 0
-
-        print("V1 DIRETO E INDIRETO = {}".format(V1))
 
         # V1 DIRETO E INDIRETO CORRETO
 

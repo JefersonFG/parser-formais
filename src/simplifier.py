@@ -43,7 +43,7 @@ class Simplifier:
             for origin, productions in grammar.rules.items():
                 for production in productions:
                     for emptyVariable in Ve:
-                        if emptyVariable in production and origin not in Ve:
+                        if emptyVariable in production and len(production) == 1 and origin not in Ve:
                             Ve.append(origin)  # adiciona todas as variáveis que produzem indiretamente vazio à Ve
                             contador = 0
 
@@ -85,7 +85,7 @@ class Simplifier:
         if Ve:
             P1[grammar.start].append(['V'])
 
-        grammar.variables = Ve
+        #grammar.variables = Ve
         grammar.rules = P1
 
         print("\nEtapa 3: geração da palavra vazia, se necessário")
@@ -154,7 +154,7 @@ class Simplifier:
         T2 = []
         V2 = [grammar.start]
 
-        for start in V2:  # variavel de onde vai partir
+        for start in V2:  # variável de onde vai partir
             contador = 0
             while contador == 0:
                 contador = 1
@@ -164,11 +164,13 @@ class Simplifier:
                             # se tiver alguma variavel nas produções, então ela é atingível
                             if variable in production and variable not in V2:
                                 V2.append(variable)
-                                contador = 0
-                                for terminal in grammar.terminals:
-                                    if terminal in production and terminal not in T2:
-                                        T2.append(terminal)
-                                        contador = 0
+                                #contador = 0
+                            # deve-se adicionar os terminais atingíveis de produções que partem de V2
+                            for terminal in grammar.terminals:
+                                if terminal in production and terminal not in T2 and origin in V2:
+                                    T2.append(terminal)
+                                    contador = 0
+                                    
 
         lista_remove = []
 

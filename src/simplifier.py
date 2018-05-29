@@ -110,7 +110,7 @@ class Simplifier:
             for origin, productions in grammar.rules.items():
                 for production in productions:
                     for terminal in grammar.terminals:  # passa por todos os terminais
-                        if terminal in production and len(production) == 1 or 'V' in production:
+                        if (terminal in production and len(production) == 1) or ('V' in production and len(production) == 1):
                             if origin not in V1:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0

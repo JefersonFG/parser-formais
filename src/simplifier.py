@@ -80,9 +80,9 @@ class Simplifier:
         print("P1: " + str(P1))
 
         # Etapa 3
-        # Se possui V, inserir INICIO -> V
+        # Se possui INICIO =>+ V, inserir INICIO -> V
 
-        if Ve:
+        if grammar.start in Ve:
             P1[grammar.start].append(['V'])
 
         #grammar.variables = Ve

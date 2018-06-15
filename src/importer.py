@@ -78,4 +78,9 @@ class Importer:
                 else:
                     rules[origin] = [production]
 
-        return Grammar(variables, terminals, rules, initial)
+        grammar = Grammar(variables, terminals, rules, initial)
+
+        print("Gramática importada:")
+        print(grammar)
+
+        return grammar

@@ -3,6 +3,12 @@
 
 ## Simplificação de GLCs, Forma Normal de Chomsky e Parsing de Linguagem Natural com CYK
 
+## Autores
+
+Jéferson Guimarães - 262522
+Caio da Silva - 279459
+Lucas da Silveira - 208695
+
 ## Uso
 
 ```bash

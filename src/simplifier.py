@@ -57,9 +57,9 @@ class Simplifier:
             for production in productions:
                 if 'V' not in production:
                     if origin in P1:
-                        P1[origin].append(production) # adiciona produção à origem já existente em P1
+                        P1[origin].append(production)  # adiciona produção à origem já existente em P1
                     else:
-                        P1[origin] = [production] # adiciona a produção com a origem, caso não esteja em P1
+                        P1[origin] = [production]  # adiciona a produção com a origem, caso não esteja em P1
 
         contador = 0
 
@@ -109,7 +109,8 @@ class Simplifier:
             for origin, productions in grammar.rules.items():
                 for production in productions:
                     for terminal in grammar.terminals:  # passa por todos os terminais
-                        if (terminal in production and len(production) == 1) or ('V' in production and len(production) == 1):
+                        if terminal in production and len(production) == 1 \
+                                or 'V' in production and len(production) == 1:
                             if origin not in V1:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0
@@ -132,12 +133,10 @@ class Simplifier:
         # uma vez que P1 <= P (deve-se remover produções de P se necessário para chegar a P1)
 
         for origin, productions in grammar.rules.items():
-            remove_regra = 0
             for production in productions:
                 for prodItem in production:
-                    if prodItem not in V1 and prodItem not in grammar.terminals: # considerar apenas Variáveis
+                    if prodItem not in V1 and prodItem not in grammar.terminals:  # considerar apenas Variáveis
                         grammar.rules[origin].remove(production)
-                        remove_regra = 0
 
         print("\nEtapa 1 - qualquer variável gera terminais:")
         print(grammar)
@@ -159,20 +158,17 @@ class Simplifier:
                             # se tiver alguma variavel nas produções, então ela é atingível
                             if variable in production and variable not in V2:
                                 V2.append(variable)
-                                #contador = 0
                             # deve-se adicionar os terminais atingíveis de produções que partem de V2
                             for terminal in grammar.terminals:
                                 if terminal in production and terminal not in T2 and origin in V2:
                                     T2.append(terminal)
                                     contador = 0
-                                    
 
         lista_remove = []
 
         for origin, productions in grammar.rules.items():
-            for production in productions:
-                if origin not in V2:
-                    lista_remove.append(origin)
+            if origin not in V2:
+                lista_remove.append(origin)
         
         for origin in lista_remove:
             grammar.rules.pop(origin, None)

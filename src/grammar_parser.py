@@ -18,7 +18,7 @@ class Parser:
         n = len(sentence)
 
         # Inicializa tabela com '-' em todas as posições (equivalente ao vazio)
-        matrix = [[['-'] for col in range(n)] for row in range(n)]
+        table = [[['-'] for _ in range(n)] for _ in range(n)]
 
         # ETAPA 1
         # Produções que geram terminais da sentença diretamente A -> a
@@ -27,10 +27,10 @@ class Parser:
             for origin, productions in grammar.rules.items():
                 for production in productions:
                     if len(production) == 1 and production[0] == sentence[r]:
-                        if matrix[0][r][0] == '-':
-                            matrix[0][r] = [origin]
-                        elif origin not in matrix[0][r]:
-                            matrix[0][r].append(origin)
+                        if table[0][r][0] == '-':
+                            table[0][r] = [origin]
+                        elif origin not in table[0][r]:
+                            table[0][r].append(origin)
 
         # ETAPA 2
         # Produções que geram 2 variáveis A -> BC
@@ -41,17 +41,36 @@ class Parser:
                     for origin, productions in grammar.rules.items():
                         for production in productions:
                             if len(production) == 2:
-                                if production[0] in matrix[k-1][r-1] and production[1] in matrix[s-k-1][r+k-1]:
-                                    if matrix[s-1][r-1][0] == '-':
-                                        matrix[s-1][r-1] = [origin]
-                                    elif origin not in matrix[s-1][r-1]:
-                                        matrix[s-1][r-1].append(origin)
+                                if production[0] in table[k-1][r-1] and production[1] in table[s-k-1][r+k-1]:
+                                    if table[s-1][r-1][0] == '-':
+                                        table[s-1][r-1] = [origin]
+                                    elif origin not in table[s-1][r-1]:
+                                        table[s-1][r-1].append(origin)
 
         # ETAPA 3
         # Condição de aceitação da entrada
 
         print("\nTabela de derivação da sentença no algoritmo CYK:")
-        for row in reversed(matrix):
-            print(row)
+        Parser.print_cyk_table(table, n)
 
-        return grammar.start in matrix[n-1][0]
+        return grammar.start in table[n-1][0]
+
+    @staticmethod
+    def print_cyk_table(table, size):
+        """Exibe a tabela gerada pelo algoritmo CYK na tela"""
+        width_list = [-1 for _ in range(size)]
+
+        for row in table:
+            for i in range(size):
+                row[i] = ", ".join(row[i])
+                if len(row[i]) > width_list[i]:
+                    width_list[i] = len(row[i])
+
+        lines = [[] for _ in range(size)]
+
+        for i in range(size):
+            for j in range(size - i):
+                lines[i].append(table[i][j].ljust(width_list[j]))
+
+        for line in reversed(lines):
+            print("| {} |".format(" | ".join(line)))

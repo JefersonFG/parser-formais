@@ -9,15 +9,13 @@ class Parser:
         """Faz o reconhecimento da sentença usando o algoritmo CYK
 
         A gramática deve estar na Forma Normal de Chomsky"""
-        if ' ' in sentence:
-            # Separa a sentenca em palavras
-            sentence_list = sentence.split()
-        else:
-            # Separa a sentenca em caracteres
-            sentence_list = list(sentence)
+        print("\nFazendo o reconhecimento da gramática utilizando o algoritmo CYK")
+
+        if len(sentence) == 1 and sentence[0] not in grammar.terminals:
+            sentence = list(sentence[0])
 
         # Matriz quadrada do tamanho da palavra
-        n = len(sentence_list)
+        n = len(sentence)
 
         # Inicializa tabela com '-' em todas as posições (equivalente ao vazio)
         matrix = [[['-'] for col in range(n)] for row in range(n)]
@@ -28,7 +26,7 @@ class Parser:
         for r in range(n):
             for origin, productions in grammar.rules.items():
                 for production in productions:
-                    if len(production) == 1 and production[0] == sentence_list[r]:
+                    if len(production) == 1 and production[0] == sentence[r]:
                         if matrix[0][r][0] == '-':
                             matrix[0][r] = [origin]
                         elif origin not in matrix[0][r]:
@@ -52,7 +50,7 @@ class Parser:
         # ETAPA 3
         # Condição de aceitação da entrada
 
-        print("Tabela de derivação da sentença no algoritmo CYK:")
+        print("\nTabela de derivação da sentença no algoritmo CYK:")
         for row in reversed(matrix):
             print(row)
 

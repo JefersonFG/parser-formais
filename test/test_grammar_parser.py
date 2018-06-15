@@ -13,7 +13,7 @@ def test_cyk():
              "A": [["S", "A"], ["A", "S"], ["a"]]}
 
     grammar = Grammar(variables, terminals, rules, initial)
-    sentence = "abaab"
+    sentence = ["abaab"]
 
     assert(Parser.parse_cyk(grammar, sentence))
 
@@ -23,7 +23,7 @@ def test_cyk_2():
     terminals = ["she", "eats", "fish", "with", "a", "fork"]
     variables = ["S", "VP", "PP", "NP", "V_", "P", "N", "Det"]
     initial = "S"
-    rules = {"S": [["NP", 'VP']],
+    rules = {"S": [["NP", "VP"]],
              "VP": [["VP", "PP"], ["V", "NP"], ["eats"]],
              "PP": [["P", "NP"]],
              "NP": [["Det", "N"], ["she"]],
@@ -33,6 +33,6 @@ def test_cyk_2():
              "Det": [["a"]]}
 
     grammar = Grammar(variables, terminals, rules, initial)
-    sentence = "she eats a fish with a fork"
+    sentence = ["she", "eats", "a", "fish", "with", "a", "fork"]
 
     assert(Parser.parse_cyk(grammar, sentence))

@@ -84,8 +84,7 @@ class Simplifier:
 
         if grammar.start in Ve:
             P1[grammar.start].append(['V'])
-
-        #grammar.variables = Ve
+            
         grammar.rules = P1
 
         print("\nEtapa 3: geração da palavra vazia, se necessário")
@@ -115,8 +114,6 @@ class Simplifier:
                                 V1.append(origin)  # adiciona produções do tipo A -> a à V1
                                 contador = 0
 
-        # V1 DIRETO CORRETO
-
         contador = 0
         while contador == 0:
             contador = 1
@@ -128,8 +125,6 @@ class Simplifier:
                         if variable in production and origin not in V1:
                             V1.append(origin)
                             contador = 0
-
-        # V1 DIRETO E INDIRETO CORRETO
 
         grammar.variables = V1
 

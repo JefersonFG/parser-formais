@@ -51,14 +51,19 @@ class Parser:
         # Condição de aceitação da entrada
 
         print("\nTabela de derivação da sentença no algoritmo CYK:")
-        Parser.print_cyk_table(table, n)
+        Parser.print_cyk_table(table, sentence)
 
         return grammar.start in table[n-1][0]
 
     @staticmethod
-    def print_cyk_table(table, size):
+    def print_cyk_table(table, sentence):
         """Exibe a tabela gerada pelo algoritmo CYK na tela"""
+        size = len(sentence)
         width_list = [-1 for _ in range(size)]
+
+        for i in range(size):
+            if len(sentence[i]) > width_list[i]:
+                width_list[i] = len(sentence[i])
 
         for row in table:
             for i in range(size):
@@ -71,6 +76,9 @@ class Parser:
         for i in range(size):
             for j in range(size - i):
                 lines[i].append(table[i][j].ljust(width_list[j]))
+            sentence[i] = sentence[i].ljust(width_list[i])
 
         for line in reversed(lines):
             print("| {} |".format(" | ".join(line)))
+
+        print("  {}  ".format("   ".join(sentence)))

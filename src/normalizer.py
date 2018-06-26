@@ -32,6 +32,9 @@ class Normalizer:
         # Cria um novo dicionário para manter as novas produções durante a execução da etapa
         new_rules = defaultdict()
 
+        # Contador para as variáveis
+        n = 1
+
         for origin, productions in grammar.rules.items():
             for production in productions:
                 num_symbols = len(production)
@@ -42,7 +45,8 @@ class Normalizer:
                         if production[i] in grammar.terminals:
                             # Salva o terminal e o substitui na produção por uma nova variável
                             terminal = production[i]
-                            new_variable = "C" + terminal
+                            new_variable = "C" + str(n)
+                            n = n + 1
                             production[i] = new_variable
                             # Adiciona a nova variável a lista de variáveis
                             grammar.variables.append(new_variable)

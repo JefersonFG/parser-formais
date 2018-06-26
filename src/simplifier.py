@@ -34,7 +34,7 @@ class Simplifier:
 
         for origin, productions in grammar.rules.items():
             for production in productions:
-                if 'V' in production:
+                if 'V' in production and len(production) == 1:
                     Ve.append(origin)  # adiciona todas as variáveis que produzem diretamente vazio à Ve
         
         contador = 0
@@ -70,11 +70,22 @@ class Simplifier:
                     for variable in Ve:
                         if variable in production:
                             new_production = copy.deepcopy(production)
-                            new_production.remove(variable)
-                            # se nao foi add, se nao gerou um vazio, add!
-                            if new_production not in P1[origin] and new_production:
-                                contador = 0
-                                P1[origin].append(new_production)
+                            production_size = len(production)
+                            num_variables = production.count(variable)
+                            remove_count = 0
+
+                            for i in range(num_variables):
+                                for j in range(production_size):
+                                    if production[j] == variable:
+                                        new_production.pop(j - remove_count)
+                                        remove_count = remove_count + 1
+                                        if remove_count == i + 1:
+                                            if new_production not in P1[origin] and new_production:
+                                                contador = 0
+                                                P1[origin].append(new_production)
+                                            new_production = copy.deepcopy(production)
+                                            remove_count = 0
+                                remove_count = 0
 
         print("\nEtapa 2 - exclusão de produções vazias:")
         print("P1: " + str(P1))
@@ -116,16 +127,30 @@ class Simplifier:
                                 contador = 0
 
         contador = 0
+        dont_generate_terminal = False
         while contador == 0:
             contador = 1
             for origin, productions in grammar.rules.items():
                 for production in productions:
-                    for variable in V1:
-                        # se alguma variavel de V1 estiver nas produções
-                        # a origem dessas produções será adicionada à V1 (Se já não estiver)
-                        if variable in production and origin not in V1:
-                            V1.append(origin)
-                            contador = 0
+                    for element in production:
+                        if element not in V1 and element not in grammar.terminals:
+                            dont_generate_terminal = True
+                            break
+
+                    if not dont_generate_terminal and origin not in V1:
+                        V1.append(origin)
+                        contador = 0
+
+                    dont_generate_terminal = False
+
+        lista_remove = []
+
+        for origin, productions in grammar.rules.items():
+            if origin not in V1:
+                lista_remove.append(origin)
+        
+        for origin in lista_remove:
+            grammar.rules.pop(origin, None)
 
         grammar.variables = V1
 
@@ -152,17 +177,12 @@ class Simplifier:
             contador = 0
             while contador == 0:
                 contador = 1
-                for origin, productions in grammar.rules.items():
+                for productions in grammar.rules[start]:
                     for production in productions:
                         for variable in grammar.variables:
                             # se tiver alguma variavel nas produções, então ela é atingível
                             if variable in production and variable not in V2:
                                 V2.append(variable)
-                            # deve-se adicionar os terminais atingíveis de produções que partem de V2
-                            for terminal in grammar.terminals:
-                                if terminal in production and terminal not in T2 and origin in V2:
-                                    T2.append(terminal)
-                                    contador = 0
 
         lista_remove = []
 
@@ -172,6 +192,12 @@ class Simplifier:
         
         for origin in lista_remove:
             grammar.rules.pop(origin, None)
+
+        for origin, productions in grammar.rules.items():
+            for terminal in grammar.terminals:
+                for production in productions:
+                    if terminal in production and terminal not in T2:
+                        T2.append(terminal)
 
         grammar.terminals = T2
         grammar.variables = V2
@@ -263,7 +289,7 @@ class Simplifier:
             for element in transitive_closure:
                 # Itera sobre as variáveis do fecho
                 if element in grammar.rules.keys():
-                    productions = grammar.rules[element]
+                    productions = copy.deepcopy(grammar.rules[element])
                     for production in productions:
                         # Verifica se a variável gera uma produção que não seja só outra variável
                         if len(production) != 1 or production[0] in grammar.terminals:

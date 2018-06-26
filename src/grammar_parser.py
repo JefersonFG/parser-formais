@@ -70,6 +70,8 @@ class Parser:
                                     elif origin not in table[s-1][r-1]:
                                         table[s-1][r-1].append(origin)
                                         nodes[s-1][r-1].append(parent)
+                                    else:
+                                        nodes[s-1][r-1].append(parent)
 
         # ETAPA 3
         # Condição de aceitação da entrada
@@ -79,8 +81,10 @@ class Parser:
 
         print("\nÁrvores de derivação da sentença:")
         if len(nodes[n-1][0]) > 0:
-            for pre, fill, node in RenderTree(next(node for node in nodes[n-1][0] if node.name == grammar.start)):
-                print("%s%s" % (pre, node.name))
+            for node in nodes[n-1][0]:
+                if node.name == grammar.start:
+                    for pre, _, node in RenderTree(node):
+                        print("%s%s" % (pre, node.name))
         else:
             print("Não há árvore de derivação possível para essa sentença")
 
